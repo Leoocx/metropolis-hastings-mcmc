@@ -107,12 +107,11 @@ x_grid = np.linspace(-6, 6, 200)       # grade de pontos para a curva real
 p_grid = p(x_grid)                     # valores da densidade alvo (não normalizada)
 
 # Normalizar a densidade teórica numericamente para comparar com o histograma
-# Usamos np.trapezoid (substituto do antigo np.trapz) que calcula a integral pela regra do trapézio.
-# Se ocorrer erro de atributo, tente: from numpy import trapz (antigo) ou use scipy.integrate.simps.
+# Usamos np.trapezoid que calcula a integral pela regra do trapézio.
+
 try:
     integral = np.trapezoid(p_grid, x_grid)
 except AttributeError:
-    # Fallback para versões muito antigas do numpy: usar np.trapz
     integral = np.trapz(p_grid, x_grid)
 p_norm = p_grid / integral
 
