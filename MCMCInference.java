@@ -12,9 +12,8 @@ public class MCMCInference {
 
     private static final Random random = new Random();
 
-    // ------------------------------------------------------------
     // 1. GERADOR GAMMA (Marsaglia & Tsang)
-    // ------------------------------------------------------------
+    // // Gera uma variável aleatória com Distribuição Gamma via método de Marsaglia e Tsang (2000).
     private static double nextGamma(double shape, double scale) {
         if (shape < 1) {
             double u = random.nextDouble();
@@ -37,9 +36,8 @@ public class MCMCInference {
         }
     }
 
-    // ------------------------------------------------------------
     // 2. AMOSTRADOR DIRICHLET
-    // ------------------------------------------------------------
+    // // Gera um vetor de proporções aleatórias cuja soma é igual a 1 via Distribuição Dirichlet.
     private static double[] nextDirichlet(double[] alphas) {
         double[] gammas = new double[alphas.length];
         double soma = 0.0;
@@ -81,7 +79,7 @@ public class MCMCInference {
         MarkovChain mc = new MarkovChain(estados);
         mc.definirMatriz(matrix, estados);
         double prob = mc.probabilidadeSequencia(observacoes);
-        return Math.log(prob + 1e-300); // proteção contra log(0)
+        return Math.log(prob + 1e-300); // serve de proteção contra log(0)
     }
 
     /**
@@ -104,9 +102,6 @@ public class MCMCInference {
         return proposta;
     }
 
-    /**
-     * Cria uma cópia de uma matriz 2D.
-     */
     private static double[][] copiarMatriz(double[][] original) {
         double[][] copia = new double[original.length][];
         for (int i = 0; i < original.length; i++) {
@@ -142,20 +137,20 @@ public class MCMCInference {
 
         int n = estados.size();
 
-        // --- 4a. Inicialização: matriz uniforme ---
+        // --- Inicialização: matriz uniforme ---
         double[][] atual = new double[n][n];
         for (int i = 0; i < n; i++) {
             Arrays.fill(atual[i], 1.0 / n);
         }
 
-        // --- 4b. Log-posterior inicial ---
+        // --- Log-posterior inicial ---
         double logPostAtual = logPrior(atual, alphaPrior) + logLikelihood(atual, estados, observacoes);
 
-        // --- 4c. Estruturas para guardar as amostras ---
+        // --- Estruturas para guardar as amostras ---
         List<double[][]> amostras = new ArrayList<>();
         List<Double> logPosts = new ArrayList<>();
 
-        // --- 4d. Loop principal ---
+        // --- Loop principal ---
         for (int iter = 0; iter < numIteracoes; iter++) {
 
             // 1. Gerar proposta
@@ -184,7 +179,7 @@ public class MCMCInference {
     }
 
     // ------------------------------------------------------------
-    // 5. CLASSE INTERNA PARA ARMAZENAR RESULTADOS
+    // 5. CLASSE PARA ARMAZENAR RESULTADOS
     // ------------------------------------------------------------
 
     public static class ResultadoMCMC {
@@ -247,9 +242,6 @@ public class MCMCInference {
         public List<Double> getLogPosts() { return logPosts; }
         public int getNumAmostras() { return numAmostras; }
 
-        /**
-         * Exibe os resultados formatados no console.
-         */
         public void imprimirResultados() {
             double[][] media = getMediaPosterior();
             double[][] lower = getLimiteInferior95();
